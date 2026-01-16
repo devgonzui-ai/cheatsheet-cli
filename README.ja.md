@@ -7,7 +7,7 @@
 ## インストール
 
 ```bash
-npm install -g cheatsheet-cli
+npm install -g @gonzui/csheet-cli
 ```
 
 ## コマンド一覧

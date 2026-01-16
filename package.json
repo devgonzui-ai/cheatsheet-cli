@@ -1,5 +1,5 @@
 {
-  "name": "cheatsheet-cli",
+  "name": "@gonzui/csheet-cli",
   "version": "1.0.0",
   "description": "コマンドやツールのチートシートをローカルに保存・管理できるCLIツール",
   "main": "dist/index.js",
@@ -19,8 +19,24 @@
     "cli",
     "command-line"
   ],
-  "author": "",
+  "author": "gonzui",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tanaka-naoki/cheatsheet-cli"
+  },
+  "homepage": "https://github.com/tanaka-naoki/cheatsheet-cli#readme",
+  "bugs": {
+    "url": "https://github.com/tanaka-naoki/cheatsheet-cli/issues"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "files": [
+    "dist",
+    "bin",
+    "!dist/__tests__"
+  ],
   "dependencies": {
     "chalk": "^4.1.2",
     "cli-highlight": "^2.1.11",

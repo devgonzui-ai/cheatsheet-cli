@@ -7,7 +7,7 @@ A CLI tool for managing command and tool cheatsheets locally.
 ## Installation
 
 ```bash
-npm install -g cheatsheet-cli
+npm install -g @gonzui/csheet-cli
 ```
 
 ## Commands
