@@ -1,0 +1,39 @@
+{
+  "name": "cheatsheet-cli",
+  "version": "1.0.0",
+  "description": "コマンドやツールのチートシートをローカルに保存・管理できるCLIツール",
+  "main": "dist/index.js",
+  "bin": {
+    "cs": "./bin/cs.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "keywords": [
+    "cheatsheet",
+    "cli",
+    "command-line"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "cli-highlight": "^2.1.11",
+    "cli-table3": "^0.6.3",
+    "commander": "^11.1.0",
+    "fs-extra": "^11.2.0",
+    "open": "^8.4.2",
+    "string-width": "^4.2.3"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.0",
+    "vitest": "^4.0.17"
+  }
+}
