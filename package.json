@@ -1,6 +1,6 @@
 {
   "name": "@gonzui/csheet-cli",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A CLI tool to save and manage cheatsheets for commands and tools locally",
   "main": "dist/index.js",
   "bin": {
@@ -19,15 +19,15 @@
     "cli",
     "command-line"
   ],
-  "author": "gonzui",
+  "author": "devgonzui-ai",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tanaka-naoki/cheatsheet-cli"
+    "url": "https://github.com/devgonzui-ai/cheatsheet-cli"
   },
-  "homepage": "https://github.com/tanaka-naoki/cheatsheet-cli#readme",
+  "homepage": "https://github.com/devgonzui-ai/cheatsheet-cli#readme",
   "bugs": {
-    "url": "https://github.com/tanaka-naoki/cheatsheet-cli/issues"
+    "url": "https://github.com/devgonzui-ai/cheatsheet-cli/issues"
   },
   "engines": {
     "node": ">=14.0.0"
