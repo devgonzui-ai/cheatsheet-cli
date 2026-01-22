@@ -23,6 +23,8 @@ npm install -g @gonzui/csheet-cli
 | `cs edit <name>` | Edit a cheatsheet |
 | `cs rm <name>` | Delete a cheatsheet (with confirmation) |
 | `cs rm <name> --force` | Delete without confirmation |
+| `cs rename <old> <new>` | Rename a cheatsheet |
+| `cs rename <old> <new> -f` | Rename and overwrite if new name exists |
 | `cs export <name>` | Export to current directory |
 | `cs export <name> --out <path>` | Export to specified path |
 

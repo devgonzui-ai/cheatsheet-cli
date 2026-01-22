@@ -16,6 +16,7 @@ npm install -g @gonzui/csheet-cli
 | `cs search <keyword>` | キーワード検索 |
 | `cs edit <name>` | 編集 |
 | `cs rm <name>` | 削除 |
+| `cs rename <old> <new>` | 名前変更 |
 | `cs export <name>` | エクスポート |
 
 ## 追加 (add)

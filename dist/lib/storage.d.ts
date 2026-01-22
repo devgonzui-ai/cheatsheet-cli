@@ -12,4 +12,5 @@ export declare const isValidImageExtension: (filename: string) => boolean;
 export declare const readSheetContent: (sheet: Sheet) => Promise<string>;
 export declare const writeSheetContent: (sheet: Sheet, content: string) => Promise<void>;
 export declare const copyFile: (src: string, dest: string) => Promise<void>;
+export declare const renameSheet: (oldName: string, newName: string) => Promise<boolean>;
 //# sourceMappingURL=storage.d.ts.map

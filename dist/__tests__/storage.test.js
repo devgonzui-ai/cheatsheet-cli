@@ -216,6 +216,58 @@ const importStorage = async () => {
             (0, vitest_1.expect)(result).toBe(false);
         });
     });
+    (0, vitest_1.describe)('renameSheet', () => {
+        (0, vitest_1.it)('シートの名前を変更できる', async () => {
+            const storage = await importStorage();
+            await storage.initStorage();
+            const sheet = {
+                name: 'old-name',
+                type: 'text',
+                filename: 'old-name.md',
+                createdAt: '2025-01-01T00:00:00Z',
+                updatedAt: '2025-01-01T00:00:00Z',
+            };
+            // シートとファイルを作成
+            await storage.addOrUpdateSheet(sheet);
+            const sheetsDir = path_1.default.join(testDir, 'sheets');
+            await fs_extra_1.default.writeFile(path_1.default.join(sheetsDir, 'old-name.md'), '# Old Name');
+            const result = await storage.renameSheet('old-name', 'new-name');
+            const data = await storage.loadData();
+            (0, vitest_1.expect)(result).toBe(true);
+            (0, vitest_1.expect)(data.sheets).toHaveLength(1);
+            (0, vitest_1.expect)(data.sheets[0].name).toBe('new-name');
+            (0, vitest_1.expect)(data.sheets[0].filename).toBe('new-name.md');
+            (0, vitest_1.expect)(await fs_extra_1.default.pathExists(path_1.default.join(sheetsDir, 'new-name.md'))).toBe(true);
+            (0, vitest_1.expect)(await fs_extra_1.default.pathExists(path_1.default.join(sheetsDir, 'old-name.md'))).toBe(false);
+        });
+        (0, vitest_1.it)('存在しないシートのリネームはfalseを返す', async () => {
+            const storage = await importStorage();
+            await storage.initStorage();
+            const result = await storage.renameSheet('non-existent', 'new-name');
+            (0, vitest_1.expect)(result).toBe(false);
+        });
+        (0, vitest_1.it)('画像シートの名前も変更できる', async () => {
+            const storage = await importStorage();
+            await storage.initStorage();
+            const sheet = {
+                name: 'old-image',
+                type: 'image',
+                filename: 'old-image.png',
+                createdAt: '2025-01-01T00:00:00Z',
+                updatedAt: '2025-01-01T00:00:00Z',
+            };
+            // シートとファイルを作成
+            await storage.addOrUpdateSheet(sheet);
+            const imagesDir = path_1.default.join(testDir, 'images');
+            await fs_extra_1.default.writeFile(path_1.default.join(imagesDir, 'old-image.png'), 'fake image data');
+            const result = await storage.renameSheet('old-image', 'new-image');
+            const data = await storage.loadData();
+            (0, vitest_1.expect)(result).toBe(true);
+            (0, vitest_1.expect)(data.sheets[0].name).toBe('new-image');
+            (0, vitest_1.expect)(data.sheets[0].filename).toBe('new-image.png');
+            (0, vitest_1.expect)(await fs_extra_1.default.pathExists(path_1.default.join(imagesDir, 'new-image.png'))).toBe(true);
+        });
+    });
     (0, vitest_1.describe)('readSheetContent / writeSheetContent', () => {
         (0, vitest_1.it)('シートの内容を読み書きできる', async () => {
             const storage = await importStorage();

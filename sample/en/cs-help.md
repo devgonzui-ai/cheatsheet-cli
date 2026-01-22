@@ -16,6 +16,7 @@ npm install -g @gonzui/csheet-cli
 | `cs search <keyword>` | Search by keyword |
 | `cs edit <name>` | Edit cheatsheet |
 | `cs rm <name>` | Remove cheatsheet |
+| `cs rename <old> <new>` | Rename cheatsheet |
 | `cs export <name>` | Export cheatsheet |
 
 ## Add

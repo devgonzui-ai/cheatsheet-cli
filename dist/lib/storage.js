@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.copyFile = exports.writeSheetContent = exports.readSheetContent = exports.isValidImageExtension = exports.validateName = exports.getAllSheets = exports.getSheetFilePath = exports.removeSheet = exports.addOrUpdateSheet = exports.getSheet = exports.saveData = exports.loadData = exports.initStorage = void 0;
+exports.renameSheet = exports.copyFile = exports.writeSheetContent = exports.readSheetContent = exports.isValidImageExtension = exports.validateName = exports.getAllSheets = exports.getSheetFilePath = exports.removeSheet = exports.addOrUpdateSheet = exports.getSheet = exports.saveData = exports.loadData = exports.initStorage = void 0;
 const fs_extra_1 = __importDefault(require("fs-extra"));
 const path_1 = __importDefault(require("path"));
 const config_1 = require("./config");
@@ -109,4 +109,32 @@ const copyFile = async (src, dest) => {
     await fs_extra_1.default.copy(src, dest);
 };
 exports.copyFile = copyFile;
+// シートの名前を変更
+const renameSheet = async (oldName, newName) => {
+    const data = await (0, exports.loadData)();
+    const sheet = data.sheets.find((s) => s.name === oldName);
+    if (!sheet) {
+        return false;
+    }
+    // 古いファイルパス
+    const oldFilePath = (0, exports.getSheetFilePath)(sheet);
+    // 新しいファイル名を生成
+    const ext = path_1.default.extname(sheet.filename);
+    const newFilename = `${newName}${ext}`;
+    // 新しいファイルパス
+    const newFilePath = sheet.type === 'text'
+        ? path_1.default.join(config_1.SHEETS_DIR, newFilename)
+        : path_1.default.join(config_1.IMAGES_DIR, newFilename);
+    // ファイルをリネーム
+    if (await fs_extra_1.default.pathExists(oldFilePath)) {
+        await fs_extra_1.default.rename(oldFilePath, newFilePath);
+    }
+    // メタデータを更新
+    sheet.name = newName;
+    sheet.filename = newFilename;
+    sheet.updatedAt = new Date().toISOString();
+    await (0, exports.saveData)(data);
+    return true;
+};
+exports.renameSheet = renameSheet;
 //# sourceMappingURL=storage.js.map

@@ -5,6 +5,7 @@ import { showCommand } from './commands/show';
 import { searchCommand } from './commands/search';
 import { editCommand } from './commands/edit';
 import { removeCommand } from './commands/remove';
+import { renameCommand } from './commands/rename';
 import { exportCommand } from './commands/export';
 import { initStorage } from './lib/storage';
 
@@ -22,6 +23,7 @@ program.addCommand(showCommand);
 program.addCommand(searchCommand);
 program.addCommand(editCommand);
 program.addCommand(removeCommand);
+program.addCommand(renameCommand);
 program.addCommand(exportCommand);
 
 // メイン処理

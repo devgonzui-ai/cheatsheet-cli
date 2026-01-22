@@ -222,6 +222,71 @@ describe('storage', () => {
     });
   });
 
+  describe('renameSheet', () => {
+    it('シートの名前を変更できる', async () => {
+      const storage = await importStorage();
+      await storage.initStorage();
+
+      const sheet: Sheet = {
+        name: 'old-name',
+        type: 'text',
+        filename: 'old-name.md',
+        createdAt: '2025-01-01T00:00:00Z',
+        updatedAt: '2025-01-01T00:00:00Z',
+      };
+
+      // シートとファイルを作成
+      await storage.addOrUpdateSheet(sheet);
+      const sheetsDir = path.join(testDir, 'sheets');
+      await fs.writeFile(path.join(sheetsDir, 'old-name.md'), '# Old Name');
+
+      const result = await storage.renameSheet('old-name', 'new-name');
+      const data = await storage.loadData();
+
+      expect(result).toBe(true);
+      expect(data.sheets).toHaveLength(1);
+      expect(data.sheets[0].name).toBe('new-name');
+      expect(data.sheets[0].filename).toBe('new-name.md');
+      expect(await fs.pathExists(path.join(sheetsDir, 'new-name.md'))).toBe(true);
+      expect(await fs.pathExists(path.join(sheetsDir, 'old-name.md'))).toBe(false);
+    });
+
+    it('存在しないシートのリネームはfalseを返す', async () => {
+      const storage = await importStorage();
+      await storage.initStorage();
+
+      const result = await storage.renameSheet('non-existent', 'new-name');
+
+      expect(result).toBe(false);
+    });
+
+    it('画像シートの名前も変更できる', async () => {
+      const storage = await importStorage();
+      await storage.initStorage();
+
+      const sheet: Sheet = {
+        name: 'old-image',
+        type: 'image',
+        filename: 'old-image.png',
+        createdAt: '2025-01-01T00:00:00Z',
+        updatedAt: '2025-01-01T00:00:00Z',
+      };
+
+      // シートとファイルを作成
+      await storage.addOrUpdateSheet(sheet);
+      const imagesDir = path.join(testDir, 'images');
+      await fs.writeFile(path.join(imagesDir, 'old-image.png'), 'fake image data');
+
+      const result = await storage.renameSheet('old-image', 'new-image');
+      const data = await storage.loadData();
+
+      expect(result).toBe(true);
+      expect(data.sheets[0].name).toBe('new-image');
+      expect(data.sheets[0].filename).toBe('new-image.png');
+      expect(await fs.pathExists(path.join(imagesDir, 'new-image.png'))).toBe(true);
+    });
+  });
+
   describe('readSheetContent / writeSheetContent', () => {
     it('シートの内容を読み書きできる', async () => {
       const storage = await importStorage();

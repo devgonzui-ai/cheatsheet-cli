@@ -7,6 +7,7 @@ const show_1 = require("./commands/show");
 const search_1 = require("./commands/search");
 const edit_1 = require("./commands/edit");
 const remove_1 = require("./commands/remove");
+const rename_1 = require("./commands/rename");
 const export_1 = require("./commands/export");
 const storage_1 = require("./lib/storage");
 const program = new commander_1.Command();
@@ -21,6 +22,7 @@ program.addCommand(show_1.showCommand);
 program.addCommand(search_1.searchCommand);
 program.addCommand(edit_1.editCommand);
 program.addCommand(remove_1.removeCommand);
+program.addCommand(rename_1.renameCommand);
 program.addCommand(export_1.exportCommand);
 // メイン処理
 const main = async () => {

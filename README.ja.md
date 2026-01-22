@@ -23,6 +23,8 @@ npm install -g @gonzui/csheet-cli
 | `cs edit <name>` | エディタで編集 |
 | `cs rm <name>` | 削除（確認プロンプトあり） |
 | `cs rm <name> --force` | 確認なしで削除 |
+| `cs rename <old> <new>` | チートシートの名前を変更 |
+| `cs rename <old> <new> -f` | 新しい名前が存在する場合も強制変更 |
 | `cs export <name>` | カレントディレクトリにエクスポート |
 | `cs export <name> --out <path>` | 指定パスにエクスポート |
 

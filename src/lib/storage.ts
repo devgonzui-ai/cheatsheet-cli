@@ -109,3 +109,39 @@ export const writeSheetContent = async (sheet: Sheet, content: string): Promise<
 export const copyFile = async (src: string, dest: string): Promise<void> => {
   await fs.copy(src, dest);
 };
+
+// シートの名前を変更
+export const renameSheet = async (oldName: string, newName: string): Promise<boolean> => {
+  const data = await loadData();
+  const sheet = data.sheets.find((s) => s.name === oldName);
+
+  if (!sheet) {
+    return false;
+  }
+
+  // 古いファイルパス
+  const oldFilePath = getSheetFilePath(sheet);
+
+  // 新しいファイル名を生成
+  const ext = path.extname(sheet.filename);
+  const newFilename = `${newName}${ext}`;
+
+  // 新しいファイルパス
+  const newFilePath = sheet.type === 'text'
+    ? path.join(SHEETS_DIR, newFilename)
+    : path.join(IMAGES_DIR, newFilename);
+
+  // ファイルをリネーム
+  if (await fs.pathExists(oldFilePath)) {
+    await fs.rename(oldFilePath, newFilePath);
+  }
+
+  // メタデータを更新
+  sheet.name = newName;
+  sheet.filename = newFilename;
+  sheet.updatedAt = new Date().toISOString();
+
+  await saveData(data);
+
+  return true;
+};
