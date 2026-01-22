@@ -87,6 +87,40 @@ cs export git-commands --out ~/backup/
 - **Full-text Search**: Search by cheatsheet name and content
 - **Editor Integration**: Uses `$EDITOR` environment variable (defaults to vim)
 
+## Samples
+
+Sample cheatsheets are available in the `sample/` directory:
+
+```
+sample/
+├── en/           # English
+│   ├── cc-skills.md    # Claude Code skills
+│   ├── cs-help.md      # This CLI help
+│   ├── tmux.md         # tmux commands
+│   └── vim.md          # Vim commands
+└── ja/           # Japanese
+    ├── cc-skills.md
+    ├── cs-help.md
+    ├── tmux.md
+    └── vim.md
+```
+
+### Add samples to your cheatsheets
+
+```bash
+# Add English samples
+cs add vim --file sample/en/vim.md
+cs add tmux --file sample/en/tmux.md
+cs add cc-skills --file sample/en/cc-skills.md
+cs add cs-help --file sample/en/cs-help.md
+
+# Add Japanese samples
+cs add vim --file sample/ja/vim.md
+cs add tmux --file sample/ja/tmux.md
+cs add cc-skills --file sample/ja/cc-skills.md
+cs add cs-help --file sample/ja/cs-help.md
+```
+
 ## Data Storage
 
 Cheatsheets are stored in `~/.config/cheatsheet-cli/`:

@@ -87,6 +87,40 @@ cs export git-commands --out ~/backup/
 - **全文検索**: チートシート名と内容からキーワード検索
 - **エディタ連携**: 環境変数 `$EDITOR` を使用（未設定時はvim）
 
+## サンプル
+
+`sample/` ディレクトリにサンプルのチートシートがあります：
+
+```
+sample/
+├── en/           # 英語版
+│   ├── cc-skills.md    # Claude Code スキル
+│   ├── cs-help.md      # このCLIのヘルプ
+│   ├── tmux.md         # tmux コマンド
+│   └── vim.md          # Vim コマンド
+└── ja/           # 日本語版
+    ├── cc-skills.md
+    ├── cs-help.md
+    ├── tmux.md
+    └── vim.md
+```
+
+### サンプルをチートシートに追加
+
+```bash
+# 日本語版サンプルを追加
+cs add vim --file sample/ja/vim.md
+cs add tmux --file sample/ja/tmux.md
+cs add cc-skills --file sample/ja/cc-skills.md
+cs add cs-help --file sample/ja/cs-help.md
+
+# 英語版サンプルを追加
+cs add vim --file sample/en/vim.md
+cs add tmux --file sample/en/tmux.md
+cs add cc-skills --file sample/en/cc-skills.md
+cs add cs-help --file sample/en/cs-help.md
+```
+
 ## データ保存場所
 
 チートシートは `~/.config/cheatsheet-cli/` に保存されます：
