@@ -3,7 +3,7 @@
 [![npm version](https://img.shields.io/npm/v/@gonzui/csheet-cli.svg)](https://www.npmjs.com/package/@gonzui/csheet-cli)
 [![npm downloads](https://img.shields.io/npm/dm/@gonzui/csheet-cli.svg)](https://www.npmjs.com/package/@gonzui/csheet-cli)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Node.js Version](https://img.shields.io/badge/node-%3E%3D14.0.0-brightgreen.svg)](https://nodejs.org/)
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
 
 A CLI tool for managing command and tool cheatsheets locally.
 
@@ -39,6 +39,7 @@ npm install -g @gonzui/csheet-cli
 | `cs rename <old> <new> -f` | Rename and overwrite if new name exists |
 | `cs export <name>` | Export to current directory |
 | `cs export <name> --out <path>` | Export to specified path |
+| `cs mcp` | Start an MCP server for AI agents (Claude Code, Claude Desktop, etc.) |
 
 ## Usage Examples
 
@@ -123,8 +124,39 @@ cs export git-commands
 cs export git-commands --out ~/backup/
 ```
 
+### MCP Server (AI integration)
+
+`cs mcp` starts an [MCP](https://modelcontextprotocol.io/) server over stdio, turning your local cheatsheets into a knowledge base for AI agents. No API key needed — the connecting AI agent does the work.
+
+```bash
+# Register with Claude Code
+claude mcp add cheatsheet -- cs mcp
+```
+
+Claude Desktop (`claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "cheatsheet": { "command": "cs", "args": ["mcp"] }
+  }
+}
+```
+
+Once connected, the agent can:
+
+| MCP Tool | Description |
+|----------|-------------|
+| `search_cheatsheets` | Search your sheets by keyword and/or tag |
+| `get_cheatsheet` | Read the full Markdown content of a sheet |
+| `list_cheatsheets` | List all sheets with tags |
+| `add_cheatsheet` | Save new knowledge as a cheatsheet (with tags) |
+
+So you can ask Claude things like *"check my cheatsheets for the deploy procedure"* or *"save this jq one-liner collection as a cheatsheet"*.
+
 ## Features
 
+- **MCP Server**: Expose your cheatsheets to AI agents with `cs mcp`
 - **Markdown Rendering**: Syntax highlighting for code blocks, formatted tables, colored headings
 - **Full-text Search**: Search by cheatsheet name and content
 - **Tags**: Organize and filter cheatsheets with tags

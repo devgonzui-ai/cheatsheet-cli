@@ -3,7 +3,7 @@
 [![npm version](https://img.shields.io/npm/v/@gonzui/csheet-cli.svg)](https://www.npmjs.com/package/@gonzui/csheet-cli)
 [![npm downloads](https://img.shields.io/npm/dm/@gonzui/csheet-cli.svg)](https://www.npmjs.com/package/@gonzui/csheet-cli)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Node.js Version](https://img.shields.io/badge/node-%3E%3D14.0.0-brightgreen.svg)](https://nodejs.org/)
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
 
 コマンドやツールのチートシートをローカルに保存・管理できるCLIツール。
 
@@ -39,6 +39,7 @@ npm install -g @gonzui/csheet-cli
 | `cs rename <old> <new> -f` | 新しい名前が存在する場合も強制変更 |
 | `cs export <name>` | カレントディレクトリにエクスポート |
 | `cs export <name> --out <path>` | 指定パスにエクスポート |
+| `cs mcp` | AIエージェント用のMCPサーバーを起動（Claude Code / Claude Desktop など） |
 
 ## 使用例
 
@@ -123,8 +124,39 @@ cs export git-commands
 cs export git-commands --out ~/backup/
 ```
 
+### MCPサーバー（AI連携）
+
+`cs mcp` は [MCP](https://modelcontextprotocol.io/) サーバーを stdio で起動し、ローカルのチートシートを AIエージェントのナレッジベースにします。APIキー不要（接続するAIエージェント側が処理します）。
+
+```bash
+# Claude Code に登録
+claude mcp add cheatsheet -- cs mcp
+```
+
+Claude Desktop（`claude_desktop_config.json`）:
+
+```json
+{
+  "mcpServers": {
+    "cheatsheet": { "command": "cs", "args": ["mcp"] }
+  }
+}
+```
+
+接続後、エージェントは以下ができます:
+
+| MCPツール | 説明 |
+|----------|------|
+| `search_cheatsheets` | キーワード・タグでシートを検索 |
+| `get_cheatsheet` | シートのMarkdown本文を取得 |
+| `list_cheatsheets` | タグ付きで全シートを一覧 |
+| `add_cheatsheet` | 新しい知見をチートシートとして保存（タグ対応） |
+
+「デプロイ手順、あたしのチートシートから探して」「このjqワンライナー集をチートシートに保存して」みたいな使い方ができます。
+
 ## 機能
 
+- **MCPサーバー**: `cs mcp` でチートシートをAIエージェントに公開
 - **Markdownレンダリング**: コードブロックのシンタックスハイライト、テーブルの整形、見出しの色分け
 - **全文検索**: チートシート名と内容からキーワード検索
 - **タグ管理**: タグによるチートシートの整理・絞り込み
