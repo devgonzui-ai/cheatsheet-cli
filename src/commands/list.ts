@@ -2,15 +2,26 @@ import { Command } from 'commander';
 import chalk from 'chalk';
 import Table from 'cli-table3';
 import { getAllSheets } from '../lib/storage';
+import { matchByTag, formatTags } from '../lib/tags';
 
 export const listCommand = new Command('list')
   .description('List all cheatsheets')
-  .action(async () => {
+  .option('-t, --tag <tag>', 'Filter by tag')
+  .action(async (options: { tag?: string }) => {
     try {
-      const sheets = await getAllSheets();
+      let sheets = await getAllSheets();
+
+      // タグで絞り込み
+      if (options.tag) {
+        sheets = sheets.filter((sheet) => matchByTag(sheet, options.tag as string));
+      }
 
       if (sheets.length === 0) {
-        console.log(chalk.yellow('No cheatsheets found'));
+        if (options.tag) {
+          console.log(chalk.yellow(`No cheatsheets found with tag "${options.tag}"`));
+        } else {
+          console.log(chalk.yellow('No cheatsheets found'));
+        }
         return;
       }
 
@@ -21,15 +32,16 @@ export const listCommand = new Command('list')
         head: [
           chalk.cyan('Name'),
           chalk.cyan('Type'),
+          chalk.cyan('Tags'),
           chalk.cyan('Updated'),
         ],
-        colWidths: [30, 10, 25],
+        colWidths: [30, 10, 20, 25],
       });
 
       for (const sheet of sheets) {
         const typeLabel = sheet.type === 'text' ? 'Text' : 'Image';
         const updatedAt = new Date(sheet.updatedAt).toLocaleString('en-US');
-        table.push([sheet.name, typeLabel, updatedAt]);
+        table.push([sheet.name, typeLabel, formatTags(sheet.tags), updatedAt]);
       }
 
       console.log(table.toString());

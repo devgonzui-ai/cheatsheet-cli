@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.renderMarkdown = exports.formatTable = exports.processInline = exports.formatCodeBlock = exports.getDisplayWidth = void 0;
+exports.renderMarkdown = exports.extractCodeBlocks = exports.formatTable = exports.processInline = exports.formatCodeBlock = exports.getDisplayWidth = void 0;
 const chalk_1 = __importDefault(require("chalk"));
 const cli_table3_1 = __importDefault(require("cli-table3"));
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -75,6 +75,34 @@ const formatTable = (tableLines) => {
     return table.toString();
 };
 exports.formatTable = formatTable;
+// Markdownからコードブロックを抽出する
+const extractCodeBlocks = (content) => {
+    const lines = content.split('\n');
+    const blocks = [];
+    let inCodeBlock = false;
+    let lang = '';
+    let buffer = [];
+    for (const line of lines) {
+        if (line.startsWith('```')) {
+            if (!inCodeBlock) {
+                inCodeBlock = true;
+                lang = line.slice(3).trim();
+                buffer = [];
+            }
+            else {
+                blocks.push({ lang, code: buffer.join('\n').trim() });
+                inCodeBlock = false;
+                lang = '';
+            }
+            continue;
+        }
+        if (inCodeBlock) {
+            buffer.push(line);
+        }
+    }
+    return blocks.filter((block) => block.code !== '');
+};
+exports.extractCodeBlocks = extractCodeBlocks;
 // カスタムMarkdownレンダラー
 const renderMarkdown = (content) => {
     const lines = content.split('\n');

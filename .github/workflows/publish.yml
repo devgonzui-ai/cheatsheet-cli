@@ -1,0 +1,33 @@
+name: Publish to npm
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # Trusted Publisher (OIDC) に必須
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: 'https://registry.npmjs.org'
+
+      # Trusted Publishing には npm 11.5.1 以上が必要
+      - run: npm install -g npm@latest
+
+      - run: npm ci
+
+      - run: npm test
+
+      - run: npm run build
+
+      - run: npm publish

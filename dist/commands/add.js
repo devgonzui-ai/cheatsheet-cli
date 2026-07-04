@@ -11,6 +11,7 @@ const fs_extra_1 = __importDefault(require("fs-extra"));
 const child_process_1 = require("child_process");
 const readline_1 = __importDefault(require("readline"));
 const storage_1 = require("../lib/storage");
+const tags_1 = require("../lib/tags");
 const config_1 = require("../lib/config");
 // 上書き確認プロンプト
 const confirmOverwrite = async (name) => {
@@ -45,10 +46,25 @@ const openEditor = (filePath) => {
         });
     });
 };
+// 標準入力を全て読み込む
+const readStdin = () => {
+    return new Promise((resolve, reject) => {
+        let data = '';
+        process.stdin.setEncoding('utf-8');
+        process.stdin.on('data', (chunk) => {
+            data += chunk;
+        });
+        process.stdin.on('end', () => resolve(data));
+        process.stdin.on('error', (err) => reject(err));
+    });
+};
 exports.addCommand = new commander_1.Command('add')
     .description('Add a cheatsheet')
     .argument('<name>', 'Name of the cheatsheet')
     .option('-f, --file <path>', 'Add from existing file')
+    .option('-s, --stdin', 'Read content from stdin (e.g. `tldr tar | cs add tar-tips --stdin`)')
+    .option('-t, --tag <tags>', 'Comma-separated tags (e.g. --tag git,vcs)')
+    .option('--force', 'Overwrite existing sheet without confirmation')
     .addOption(new commander_1.Option('-i, --image <path>', '画像ファイルを追加').hideHelp())
     .action(async (name, options) => {
     // 名前のバリデーション
@@ -56,14 +72,33 @@ exports.addCommand = new commander_1.Command('add')
         console.error(chalk_1.default.red('Error: Name can only contain alphanumeric characters, hyphens, and underscores'));
         process.exit(1);
     }
+    // タグのパースとバリデーション
+    let tags;
+    if (options.tag) {
+        tags = (0, tags_1.parseTags)(options.tag);
+        const invalidTags = (0, tags_1.validateTags)(tags);
+        if (invalidTags.length > 0) {
+            console.error(chalk_1.default.red(`Error: Invalid tag(s): ${invalidTags.join(', ')} (only alphanumeric characters, hyphens, and underscores are allowed)`));
+            process.exit(1);
+        }
+    }
     // 既存シートのチェック
     const existingSheet = await (0, storage_1.getSheet)(name);
-    if (existingSheet) {
+    if (existingSheet && !options.force) {
+        if (options.stdin) {
+            // stdinがパイプで塞がっているため確認プロンプトが使えない
+            console.error(chalk_1.default.red(`Error: Sheet "${name}" already exists. Use --force to overwrite when using --stdin`));
+            process.exit(1);
+        }
         const shouldOverwrite = await confirmOverwrite(name);
         if (!shouldOverwrite) {
             console.log(chalk_1.default.yellow('Cancelled'));
             return;
         }
+    }
+    // タグ未指定で上書きする場合は既存のタグを引き継ぐ
+    if (!tags && existingSheet?.tags) {
+        tags = existingSheet.tags;
     }
     const now = new Date().toISOString();
     try {
@@ -86,11 +121,37 @@ exports.addCommand = new commander_1.Command('add')
                 name,
                 type: 'image',
                 filename,
+                tags,
                 createdAt: existingSheet?.createdAt || now,
                 updatedAt: now,
             };
             await (0, storage_1.addOrUpdateSheet)(sheet);
             console.log(chalk_1.default.green(`Added image sheet "${name}"`));
+        }
+        else if (options.stdin) {
+            // 標準入力から追加
+            if (process.stdin.isTTY) {
+                console.error(chalk_1.default.red('Error: No input piped. Usage: <command> | cs add <name> --stdin'));
+                process.exit(1);
+            }
+            const content = await readStdin();
+            if (content.trim() === '') {
+                console.log(chalk_1.default.yellow('Cancelled due to empty content'));
+                return;
+            }
+            const filename = `${name}.md`;
+            const destPath = path_1.default.join(config_1.SHEETS_DIR, filename);
+            await fs_extra_1.default.writeFile(destPath, content, 'utf-8');
+            const sheet = {
+                name,
+                type: 'text',
+                filename,
+                tags,
+                createdAt: existingSheet?.createdAt || now,
+                updatedAt: now,
+            };
+            await (0, storage_1.addOrUpdateSheet)(sheet);
+            console.log(chalk_1.default.green(`Added text sheet "${name}" from stdin`));
         }
         else if (options.file) {
             // 既存テキストファイルから追加
@@ -107,6 +168,7 @@ exports.addCommand = new commander_1.Command('add')
                 name,
                 type: 'text',
                 filename,
+                tags,
                 createdAt: existingSheet?.createdAt || now,
                 updatedAt: now,
             };
@@ -133,6 +195,7 @@ exports.addCommand = new commander_1.Command('add')
                 name,
                 type: 'text',
                 filename,
+                tags,
                 createdAt: existingSheet?.createdAt || now,
                 updatedAt: now,
             };
