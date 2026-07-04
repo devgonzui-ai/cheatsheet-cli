@@ -75,6 +75,42 @@ export const formatTable = (tableLines: string[]): string => {
   return table.toString();
 };
 
+// コードブロック
+export interface CodeBlock {
+  lang: string;
+  code: string;
+}
+
+// Markdownからコードブロックを抽出する
+export const extractCodeBlocks = (content: string): CodeBlock[] => {
+  const lines = content.split('\n');
+  const blocks: CodeBlock[] = [];
+  let inCodeBlock = false;
+  let lang = '';
+  let buffer: string[] = [];
+
+  for (const line of lines) {
+    if (line.startsWith('```')) {
+      if (!inCodeBlock) {
+        inCodeBlock = true;
+        lang = line.slice(3).trim();
+        buffer = [];
+      } else {
+        blocks.push({ lang, code: buffer.join('\n').trim() });
+        inCodeBlock = false;
+        lang = '';
+      }
+      continue;
+    }
+
+    if (inCodeBlock) {
+      buffer.push(line);
+    }
+  }
+
+  return blocks.filter((block) => block.code !== '');
+};
+
 // カスタムMarkdownレンダラー
 export const renderMarkdown = (content: string): string => {
   const lines = content.split('\n');

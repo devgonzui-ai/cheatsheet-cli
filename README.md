@@ -1,5 +1,10 @@
 # cheatsheet-cli (cs)
 
+[![npm version](https://img.shields.io/npm/v/@gonzui/csheet-cli.svg)](https://www.npmjs.com/package/@gonzui/csheet-cli)
+[![npm downloads](https://img.shields.io/npm/dm/@gonzui/csheet-cli.svg)](https://www.npmjs.com/package/@gonzui/csheet-cli)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D14.0.0-brightgreen.svg)](https://nodejs.org/)
+
 A CLI tool for managing command and tool cheatsheets locally.
 
 [日本語版 README](./README.ja.md)
@@ -16,10 +21,17 @@ npm install -g @gonzui/csheet-cli
 |---------|-------------|
 | `cs add <name>` | Add a cheatsheet (opens $EDITOR, defaults to vim) |
 | `cs add <name> --file <path>` | Add from an existing file |
+| `cs add <name> --stdin` | Add from stdin (e.g. `tldr tar \| cs add tar-tips --stdin`) |
+| `cs add <name> --tag <tags>` | Add with comma-separated tags |
 | `cs list` | List all cheatsheets |
+| `cs list --tag <tag>` | List cheatsheets filtered by tag |
 | `cs show <name>` | Display cheatsheet content (with Markdown rendering) |
 | `cs show <name> --raw` | Display raw Markdown |
+| `cs copy <name>` | Copy a code block to the clipboard (interactive if multiple) |
+| `cs copy <name> <index>` | Copy the Nth code block to the clipboard |
+| `cs copy <name> --all` | Copy the entire sheet content to the clipboard |
 | `cs search <keyword>` | Search by filename and content |
+| `cs search --tag <tag>` | Search by tag (combinable with a keyword) |
 | `cs edit <name>` | Edit a cheatsheet |
 | `cs rm <name>` | Delete a cheatsheet (with confirmation) |
 | `cs rm <name> --force` | Delete without confirmation |
@@ -38,6 +50,12 @@ cs add git-commands
 
 # Add from existing file
 cs add docker-tips --file ~/notes/docker.md
+
+# Add from stdin without opening an editor
+tldr tar | cs add tar-tips --stdin
+
+# Add with tags
+cs add git-commands --tag git,vcs
 ```
 
 ### View cheatsheets
@@ -46,6 +64,9 @@ cs add docker-tips --file ~/notes/docker.md
 # List all cheatsheets
 cs list
 
+# List only cheatsheets with a tag
+cs list --tag git
+
 # Show with Markdown rendering
 cs show git-commands
 
@@ -53,11 +74,30 @@ cs show git-commands
 cs show git-commands --raw
 ```
 
+### Copy to clipboard
+
+```bash
+# Copy a code block (prompts for selection if there are multiple)
+cs copy git-commands
+
+# Copy the 2nd code block directly
+cs copy git-commands 2
+
+# Copy the entire sheet
+cs copy git-commands --all
+```
+
 ### Search
 
 ```bash
 # Search by name or content
 cs search commit
+
+# Search by tag
+cs search --tag git
+
+# Combine keyword and tag
+cs search commit --tag git
 ```
 
 ### Edit and delete
@@ -87,6 +127,9 @@ cs export git-commands --out ~/backup/
 
 - **Markdown Rendering**: Syntax highlighting for code blocks, formatted tables, colored headings
 - **Full-text Search**: Search by cheatsheet name and content
+- **Tags**: Organize and filter cheatsheets with tags
+- **Clipboard Copy**: Copy code blocks straight to the clipboard with `cs copy`
+- **Pipe-friendly**: Register sheets from stdin with `cs add --stdin`
 - **Editor Integration**: Uses `$EDITOR` environment variable (defaults to vim)
 
 ## Samples

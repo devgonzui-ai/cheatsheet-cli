@@ -12,6 +12,7 @@ import {
   isValidImageExtension,
   copyFile,
 } from '../lib/storage';
+import { parseTags, validateTags } from '../lib/tags';
 import { getEditor, SHEETS_DIR, IMAGES_DIR } from '../lib/config';
 
 // 上書き確認プロンプト
@@ -54,12 +55,36 @@ const openEditor = (filePath: string): Promise<void> => {
   });
 };
 
+// 標準入力を全て読み込む
+const readStdin = (): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    let data = '';
+    process.stdin.setEncoding('utf-8');
+    process.stdin.on('data', (chunk) => {
+      data += chunk;
+    });
+    process.stdin.on('end', () => resolve(data));
+    process.stdin.on('error', (err) => reject(err));
+  });
+};
+
+interface AddOptions {
+  file?: string;
+  image?: string;
+  stdin?: boolean;
+  tag?: string;
+  force?: boolean;
+}
+
 export const addCommand = new Command('add')
   .description('Add a cheatsheet')
   .argument('<name>', 'Name of the cheatsheet')
   .option('-f, --file <path>', 'Add from existing file')
+  .option('-s, --stdin', 'Read content from stdin (e.g. `tldr tar | cs add tar-tips --stdin`)')
+  .option('-t, --tag <tags>', 'Comma-separated tags (e.g. --tag git,vcs)')
+  .option('--force', 'Overwrite existing sheet without confirmation')
   .addOption(new Option('-i, --image <path>', '画像ファイルを追加').hideHelp())
-  .action(async (name: string, options: { file?: string; image?: string }) => {
+  .action(async (name: string, options: AddOptions) => {
     // 名前のバリデーション
     if (!validateName(name)) {
       console.error(
@@ -68,14 +93,41 @@ export const addCommand = new Command('add')
       process.exit(1);
     }
 
+    // タグのパースとバリデーション
+    let tags: string[] | undefined;
+    if (options.tag) {
+      tags = parseTags(options.tag);
+      const invalidTags = validateTags(tags);
+      if (invalidTags.length > 0) {
+        console.error(
+          chalk.red(
+            `Error: Invalid tag(s): ${invalidTags.join(', ')} (only alphanumeric characters, hyphens, and underscores are allowed)`
+          )
+        );
+        process.exit(1);
+      }
+    }
+
     // 既存シートのチェック
     const existingSheet = await getSheet(name);
-    if (existingSheet) {
+    if (existingSheet && !options.force) {
+      if (options.stdin) {
+        // stdinがパイプで塞がっているため確認プロンプトが使えない
+        console.error(
+          chalk.red(`Error: Sheet "${name}" already exists. Use --force to overwrite when using --stdin`)
+        );
+        process.exit(1);
+      }
       const shouldOverwrite = await confirmOverwrite(name);
       if (!shouldOverwrite) {
         console.log(chalk.yellow('Cancelled'));
         return;
       }
+    }
+
+    // タグ未指定で上書きする場合は既存のタグを引き継ぐ
+    if (!tags && existingSheet?.tags) {
+      tags = existingSheet.tags;
     }
 
     const now = new Date().toISOString();
@@ -107,12 +159,42 @@ export const addCommand = new Command('add')
           name,
           type: 'image',
           filename,
+          tags,
           createdAt: existingSheet?.createdAt || now,
           updatedAt: now,
         };
 
         await addOrUpdateSheet(sheet);
         console.log(chalk.green(`Added image sheet "${name}"`));
+      } else if (options.stdin) {
+        // 標準入力から追加
+        if (process.stdin.isTTY) {
+          console.error(chalk.red('Error: No input piped. Usage: <command> | cs add <name> --stdin'));
+          process.exit(1);
+        }
+
+        const content = await readStdin();
+        if (content.trim() === '') {
+          console.log(chalk.yellow('Cancelled due to empty content'));
+          return;
+        }
+
+        const filename = `${name}.md`;
+        const destPath = path.join(SHEETS_DIR, filename);
+
+        await fs.writeFile(destPath, content, 'utf-8');
+
+        const sheet: Sheet = {
+          name,
+          type: 'text',
+          filename,
+          tags,
+          createdAt: existingSheet?.createdAt || now,
+          updatedAt: now,
+        };
+
+        await addOrUpdateSheet(sheet);
+        console.log(chalk.green(`Added text sheet "${name}" from stdin`));
       } else if (options.file) {
         // 既存テキストファイルから追加
         const filePath = path.resolve(options.file);
@@ -132,6 +214,7 @@ export const addCommand = new Command('add')
           name,
           type: 'text',
           filename,
+          tags,
           createdAt: existingSheet?.createdAt || now,
           updatedAt: now,
         };
@@ -162,6 +245,7 @@ export const addCommand = new Command('add')
           name,
           type: 'text',
           filename,
+          tags,
           createdAt: existingSheet?.createdAt || now,
           updatedAt: now,
         };

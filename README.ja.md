@@ -1,5 +1,10 @@
 # cheatsheet-cli (cs)
 
+[![npm version](https://img.shields.io/npm/v/@gonzui/csheet-cli.svg)](https://www.npmjs.com/package/@gonzui/csheet-cli)
+[![npm downloads](https://img.shields.io/npm/dm/@gonzui/csheet-cli.svg)](https://www.npmjs.com/package/@gonzui/csheet-cli)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D14.0.0-brightgreen.svg)](https://nodejs.org/)
+
 コマンドやツールのチートシートをローカルに保存・管理できるCLIツール。
 
 [English README](./README.md)
@@ -16,10 +21,17 @@ npm install -g @gonzui/csheet-cli
 |---------|------|
 | `cs add <name>` | チートシートを追加（$EDITORでエディタ起動、未設定ならvim） |
 | `cs add <name> --file <path>` | 既存ファイルから追加 |
+| `cs add <name> --stdin` | 標準入力から追加（例: `tldr tar \| cs add tar-tips --stdin`） |
+| `cs add <name> --tag <tags>` | カンマ区切りのタグを付けて追加 |
 | `cs list` | 一覧表示 |
+| `cs list --tag <tag>` | タグで絞り込んで一覧表示 |
 | `cs show <name>` | 内容を表示（Markdownレンダリング付き） |
 | `cs show <name> --raw` | 生のMarkdownを表示 |
+| `cs copy <name>` | コードブロックをクリップボードにコピー（複数ある場合は選択式） |
+| `cs copy <name> <index>` | N番目のコードブロックをコピー |
+| `cs copy <name> --all` | シート全体をコピー |
 | `cs search <keyword>` | ファイル名と内容からキーワード検索 |
+| `cs search --tag <tag>` | タグで検索（キーワードとの併用可） |
 | `cs edit <name>` | エディタで編集 |
 | `cs rm <name>` | 削除（確認プロンプトあり） |
 | `cs rm <name> --force` | 確認なしで削除 |
@@ -38,6 +50,12 @@ cs add git-commands
 
 # 既存ファイルから追加
 cs add docker-tips --file ~/notes/docker.md
+
+# エディタを開かずに標準入力から追加
+tldr tar | cs add tar-tips --stdin
+
+# タグを付けて追加
+cs add git-commands --tag git,vcs
 ```
 
 ### 表示
@@ -46,6 +64,9 @@ cs add docker-tips --file ~/notes/docker.md
 # 一覧表示
 cs list
 
+# タグで絞り込んで一覧表示
+cs list --tag git
+
 # 内容表示（Markdownレンダリング）
 cs show git-commands
 
@@ -53,11 +74,30 @@ cs show git-commands
 cs show git-commands --raw
 ```
 
+### クリップボードにコピー
+
+```bash
+# コードブロックをコピー（複数ある場合は番号を選択）
+cs copy git-commands
+
+# 2番目のコードブロックを直接コピー
+cs copy git-commands 2
+
+# シート全体をコピー
+cs copy git-commands --all
+```
+
 ### 検索
 
 ```bash
 # 名前と内容から検索
 cs search commit
+
+# タグで検索
+cs search --tag git
+
+# キーワードとタグを組み合わせて検索
+cs search commit --tag git
 ```
 
 ### 編集・削除
@@ -87,6 +127,9 @@ cs export git-commands --out ~/backup/
 
 - **Markdownレンダリング**: コードブロックのシンタックスハイライト、テーブルの整形、見出しの色分け
 - **全文検索**: チートシート名と内容からキーワード検索
+- **タグ管理**: タグによるチートシートの整理・絞り込み
+- **クリップボードコピー**: `cs copy` でコードブロックをそのままクリップボードへ
+- **パイプ対応**: `cs add --stdin` で標準入力からシートを登録
 - **エディタ連携**: 環境変数 `$EDITOR` を使用（未設定時はvim）
 
 ## サンプル

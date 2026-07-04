@@ -3,6 +3,7 @@ export interface Sheet {
     name: string;
     type: SheetType;
     filename: string;
+    tags?: string[];
     createdAt: string;
     updatedAt: string;
 }
