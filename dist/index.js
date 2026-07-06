@@ -6,6 +6,7 @@ const list_1 = require("./commands/list");
 const show_1 = require("./commands/show");
 const search_1 = require("./commands/search");
 const copy_1 = require("./commands/copy");
+const mcp_1 = require("./commands/mcp");
 const edit_1 = require("./commands/edit");
 const remove_1 = require("./commands/remove");
 const rename_1 = require("./commands/rename");
@@ -15,13 +16,14 @@ const program = new commander_1.Command();
 program
     .name('cs')
     .description('A CLI tool to save and manage cheatsheets for commands and tools locally')
-    .version('1.1.0');
+    .version('1.2.0');
 // コマンドを登録
 program.addCommand(add_1.addCommand);
 program.addCommand(list_1.listCommand);
 program.addCommand(show_1.showCommand);
 program.addCommand(search_1.searchCommand);
 program.addCommand(copy_1.copyCommand);
+program.addCommand(mcp_1.mcpCommand);
 program.addCommand(edit_1.editCommand);
 program.addCommand(remove_1.removeCommand);
 program.addCommand(rename_1.renameCommand);

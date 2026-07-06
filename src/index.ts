@@ -4,6 +4,7 @@ import { listCommand } from './commands/list';
 import { showCommand } from './commands/show';
 import { searchCommand } from './commands/search';
 import { copyCommand } from './commands/copy';
+import { mcpCommand } from './commands/mcp';
 import { editCommand } from './commands/edit';
 import { removeCommand } from './commands/remove';
 import { renameCommand } from './commands/rename';
@@ -15,7 +16,7 @@ const program = new Command();
 program
   .name('cs')
   .description('A CLI tool to save and manage cheatsheets for commands and tools locally')
-  .version('1.1.0');
+  .version('1.2.0');
 
 // コマンドを登録
 program.addCommand(addCommand);
@@ -23,6 +24,7 @@ program.addCommand(listCommand);
 program.addCommand(showCommand);
 program.addCommand(searchCommand);
 program.addCommand(copyCommand);
+program.addCommand(mcpCommand);
 program.addCommand(editCommand);
 program.addCommand(removeCommand);
 program.addCommand(renameCommand);
