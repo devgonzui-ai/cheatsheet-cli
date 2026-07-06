@@ -43,6 +43,8 @@ npm install -g @gonzui/csheet-cli
 | `cs export <name>` | カレントディレクトリにエクスポート |
 | `cs export <name> --out <path>` | 指定パスにエクスポート |
 | `cs mcp` | AIエージェント用のMCPサーバーを起動（Claude Code / Claude Desktop など） |
+| `cs config [key] [value]` | 設定の表示・変更（`editor`、`dir`） |
+| `cs completion <shell>` | シェル補完スクリプトを出力（`zsh` / `bash`） |
 
 ## 使用例
 
@@ -195,6 +197,8 @@ Claude Desktop（`claude_desktop_config.json`）:
 - **クリップボードコピー**: `cs copy` でコードブロックをそのままクリップボードへ
 - **パイプ対応**: `cs add --stdin` で標準入力からシートを登録
 - **エディタ連携**: 環境変数 `$EDITOR` を使用（未設定時はvim）
+- **設定変更**: `cs config` でエディタ・データ保存先を変更可能
+- **シェル補完**: コマンドとシート名のTab補完（`cs completion zsh|bash`）
 
 ## サンプル
 
@@ -229,6 +233,36 @@ cs add tmux --file sample/en/tmux.md
 cs add cc-skills --file sample/en/cc-skills.md
 cs add cs-help --file sample/en/cs-help.md
 ```
+
+### 設定
+
+```bash
+# 全設定を表示
+cs config
+
+# エディタをVS Codeに（$EDITORより優先）
+cs config editor "code --wait"
+
+# データ保存先を変更（Dropboxで同期する例）
+cs config dir ~/Dropbox/cheatsheets
+
+# 設定を削除
+cs config editor --unset
+```
+
+設定ファイル自体は常に `~/.config/cheatsheet-cli/config.json` にあります。`dir` を変更しても既存シートは自動移動されないので、手動でコピーしてください。
+
+### シェル補完
+
+```bash
+# zsh: ~/.zshrc に追加（compinit の後）
+eval "$(cs completion zsh)"
+
+# bash: ~/.bashrc に追加
+eval "$(cs completion bash)"
+```
+
+サブコマンドとシート名を補完できます（例: `cs show g<Tab>`）。
 
 ## データ保存場所
 

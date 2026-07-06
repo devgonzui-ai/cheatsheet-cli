@@ -43,6 +43,8 @@ npm install -g @gonzui/csheet-cli
 | `cs export <name>` | Export to current directory |
 | `cs export <name> --out <path>` | Export to specified path |
 | `cs mcp` | Start an MCP server for AI agents (Claude Code, Claude Desktop, etc.) |
+| `cs config [key] [value]` | Show or set configuration (`editor`, `dir`) |
+| `cs completion <shell>` | Output shell completion script (`zsh` / `bash`) |
 
 ## Usage Examples
 
@@ -195,6 +197,8 @@ So you can ask Claude things like *"check my cheatsheets for the deploy procedur
 - **Clipboard Copy**: Copy code blocks straight to the clipboard with `cs copy`
 - **Pipe-friendly**: Register sheets from stdin with `cs add --stdin`
 - **Editor Integration**: Uses `$EDITOR` environment variable (defaults to vim)
+- **Configurable**: Change the editor and data directory with `cs config`
+- **Shell Completion**: Tab completion for commands and sheet names (`cs completion zsh|bash`)
 
 ## Samples
 
@@ -229,6 +233,36 @@ cs add tmux --file sample/ja/tmux.md
 cs add cc-skills --file sample/ja/cc-skills.md
 cs add cs-help --file sample/ja/cs-help.md
 ```
+
+### Configuration
+
+```bash
+# Show all settings
+cs config
+
+# Use VS Code as the editor (takes precedence over $EDITOR)
+cs config editor "code --wait"
+
+# Move the data directory (e.g. into Dropbox for syncing)
+cs config dir ~/Dropbox/cheatsheets
+
+# Remove a setting
+cs config editor --unset
+```
+
+The config file itself always lives at `~/.config/cheatsheet-cli/config.json`. Changing `dir` does not move existing sheets — copy them over manually.
+
+### Shell completion
+
+```bash
+# zsh: add to ~/.zshrc (after compinit)
+eval "$(cs completion zsh)"
+
+# bash: add to ~/.bashrc
+eval "$(cs completion bash)"
+```
+
+Completes subcommands and cheatsheet names (e.g. `cs show g<Tab>`).
 
 ## Data Storage
 

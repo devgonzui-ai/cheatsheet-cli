@@ -1,0 +1,1 @@
+{"version":3,"file":"completion.d.ts","sourceRoot":"","sources":["../../src/lib/completion.ts"],"names":[],"mappings":"AAGA,eAAO,MAAM,mBAAmB,8IAgBtB,CAAC;AAGX,eAAO,MAAM,mBAAmB,uEAQtB,CAAC;AAEX,eAAO,MAAM,gBAAgB,0BAA2B,CAAC;AACzD,MAAM,MAAM,cAAc,GAAG,CAAC,OAAO,gBAAgB,CAAC,CAAC,MAAM,CAAC,CAAC;AA+C/D,eAAO,MAAM,mBAAmB,GAAI,OAAO,MAAM,KAAG,MAAM,GAAG,SAS5D,CAAC"}
