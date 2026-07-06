@@ -2,6 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const commander_1 = require("commander");
 const add_1 = require("./commands/add");
+const gen_1 = require("./commands/gen");
+const refine_1 = require("./commands/refine");
 const list_1 = require("./commands/list");
 const show_1 = require("./commands/show");
 const search_1 = require("./commands/search");
@@ -16,9 +18,11 @@ const program = new commander_1.Command();
 program
     .name('cs')
     .description('A CLI tool to save and manage cheatsheets for commands and tools locally')
-    .version('1.2.0');
+    .version('1.3.0');
 // コマンドを登録
 program.addCommand(add_1.addCommand);
+program.addCommand(gen_1.genCommand);
+program.addCommand(refine_1.refineCommand);
 program.addCommand(list_1.listCommand);
 program.addCommand(show_1.showCommand);
 program.addCommand(search_1.searchCommand);

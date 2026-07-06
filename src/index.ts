@@ -1,5 +1,7 @@
 import { Command } from 'commander';
 import { addCommand } from './commands/add';
+import { genCommand } from './commands/gen';
+import { refineCommand } from './commands/refine';
 import { listCommand } from './commands/list';
 import { showCommand } from './commands/show';
 import { searchCommand } from './commands/search';
@@ -16,10 +18,12 @@ const program = new Command();
 program
   .name('cs')
   .description('A CLI tool to save and manage cheatsheets for commands and tools locally')
-  .version('1.2.0');
+  .version('1.3.0');
 
 // コマンドを登録
 program.addCommand(addCommand);
+program.addCommand(genCommand);
+program.addCommand(refineCommand);
 program.addCommand(listCommand);
 program.addCommand(showCommand);
 program.addCommand(searchCommand);
