@@ -19,6 +19,7 @@ npm install -g @gonzui/csheet-cli
 
 | Command | Description |
 |---------|-------------|
+| `cs` | Interactive mode: incremental search + view (fzf-style) |
 | `cs add <name>` | Add a cheatsheet (opens $EDITOR, defaults to vim) |
 | `cs add <name> --file <path>` | Add from an existing file |
 | `cs add <name> --stdin` | Add from stdin (e.g. `tldr tar \| cs add tar-tips --stdin`) |
@@ -109,14 +110,25 @@ cs copy git-commands --all
 ### Search
 
 ```bash
-# Search by name or content
+# Search by name or content — content matches show the matching lines grep-style
 cs search commit
+
+# Fuzzy name matching also works ("gitcmd" finds "git-commands")
+cs search gitcmd
 
 # Search by tag
 cs search --tag git
 
 # Combine keyword and tag
 cs search commit --tag git
+```
+
+### Interactive mode
+
+Run `cs` with no arguments to pick a sheet with fzf-style incremental search (substring + fuzzy) and view it immediately.
+
+```bash
+cs
 ```
 
 ### Edit and delete
@@ -177,7 +189,8 @@ So you can ask Claude things like *"check my cheatsheets for the deploy procedur
 - **MCP Server**: Expose your cheatsheets to AI agents with `cs mcp`
 - **AI Generation**: Create cheatsheets from a topic with `cs gen`, or clean up messy notes with `cs refine` (Claude API)
 - **Markdown Rendering**: Syntax highlighting for code blocks, formatted tables, colored headings
-- **Full-text Search**: Search by cheatsheet name and content
+- **Interactive Mode**: Run `cs` with no arguments for fzf-style incremental search
+- **Full-text Search**: Search by name and content, with grep-style matching lines and fuzzy name matching
 - **Tags**: Organize and filter cheatsheets with tags
 - **Clipboard Copy**: Copy code blocks straight to the clipboard with `cs copy`
 - **Pipe-friendly**: Register sheets from stdin with `cs add --stdin`

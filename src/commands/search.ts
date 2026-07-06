@@ -2,6 +2,25 @@ import { Command } from 'commander';
 import chalk from 'chalk';
 import { getAllSheets, readSheetContent } from '../lib/storage';
 import { matchByTag } from '../lib/tags';
+import { fuzzyMatch, findMatchingLines, highlightKeyword, MatchLine } from '../lib/search';
+
+interface ResultEntry {
+  name: string;
+  type: string;
+  matchType: string;
+  contextLines?: MatchLine[];
+}
+
+// 長い行はマッチ箇所が見えるように前後を切り出す
+const excerptAroundMatch = (line: string, keyword: string, maxLength = 100): string => {
+  if (line.length <= maxLength) {
+    return line;
+  }
+  const index = line.toLowerCase().indexOf(keyword.toLowerCase());
+  const start = Math.max(0, index - 30);
+  const excerpt = line.slice(start, start + maxLength);
+  return `${start > 0 ? '...' : ''}${excerpt}${start + maxLength < line.length ? '...' : ''}`;
+};
 
 export const searchCommand = new Command('search')
   .description('Search cheatsheets by keyword and/or tag')
@@ -15,7 +34,7 @@ export const searchCommand = new Command('search')
 
     try {
       let sheets = await getAllSheets();
-      const results: { name: string; type: string; matchType: string }[] = [];
+      const results: ResultEntry[] = [];
 
       // タグで絞り込み
       if (options.tag) {
@@ -35,13 +54,15 @@ export const searchCommand = new Command('search')
         const lowerKeyword = keyword.toLowerCase();
 
         for (const sheet of sheets) {
-          // 名前で検索
+          const type = sheet.type === 'text' ? 'Text' : 'Image';
+
+          // 名前で検索（部分一致 → fuzzy の順）
           if (sheet.name.toLowerCase().includes(lowerKeyword)) {
-            results.push({
-              name: sheet.name,
-              type: sheet.type === 'text' ? 'Text' : 'Image',
-              matchType: 'name',
-            });
+            results.push({ name: sheet.name, type, matchType: 'name' });
+            continue;
+          }
+          if (fuzzyMatch(sheet.name, keyword)) {
+            results.push({ name: sheet.name, type, matchType: 'name (fuzzy)' });
             continue;
           }
 
@@ -53,6 +74,7 @@ export const searchCommand = new Command('search')
                 name: sheet.name,
                 type: 'Text',
                 matchType: 'content',
+                contextLines: findMatchingLines(content, keyword),
               });
             }
           }
@@ -76,6 +98,15 @@ export const searchCommand = new Command('search')
         console.log(
           `  ${chalk.cyan(result.name)} (${result.type}) - ${chalk.gray('matched by ' + result.matchType)}`
         );
+
+        // grep風にマッチ行を表示
+        if (keyword && result.contextLines) {
+          for (const match of result.contextLines) {
+            console.log(
+              `    ${chalk.gray(`${match.lineNumber}:`)} ${highlightKeyword(excerptAroundMatch(match.line, keyword), keyword, (m) => chalk.bold.yellow(m))}`
+            );
+          }
+        }
       }
     } catch (error) {
       console.error(chalk.red(`Error: ${(error as Error).message}`));
