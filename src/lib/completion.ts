@@ -14,6 +14,8 @@ export const COMPLETION_COMMANDS = [
   'rm',
   'rename',
   'export',
+  'backup',
+  'restore',
   'config',
   'completion',
   'help',

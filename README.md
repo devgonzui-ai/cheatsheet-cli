@@ -42,6 +42,8 @@ npm install -g @gonzui/csheet-cli
 | `cs rename <old> <new> -f` | Rename and overwrite if new name exists |
 | `cs export <name>` | Export to current directory |
 | `cs export <name> --out <path>` | Export to specified path |
+| `cs backup [--out <path>]` | Back up all sheets to a tar.gz archive |
+| `cs restore <file>` | Restore sheets from a backup archive |
 | `cs mcp` | Start an MCP server for AI agents (Claude Code, Claude Desktop, etc.) |
 | `cs config [key] [value]` | Show or set configuration (`editor`, `dir`) |
 | `cs completion <shell>` | Output shell completion script (`zsh` / `bash`) |
@@ -186,6 +188,15 @@ Once connected, the agent can:
 
 So you can ask Claude things like *"check my cheatsheets for the deploy procedure"* or *"save this jq one-liner collection as a cheatsheet"*.
 
+#### Claude Code skill (alternative to MCP)
+
+The package also ships a [skill](https://code.claude.com/docs/en/skills) that teaches Claude Code the `cs` CLI directly:
+
+```bash
+mkdir -p ~/.claude/skills/cheatsheet-cli
+cp "$(npm root -g)/@gonzui/csheet-cli/skill/SKILL.md" ~/.claude/skills/cheatsheet-cli/
+```
+
 ## Features
 
 - **MCP Server**: Expose your cheatsheets to AI agents with `cs mcp`
@@ -199,6 +210,7 @@ So you can ask Claude things like *"check my cheatsheets for the deploy procedur
 - **Editor Integration**: Uses `$EDITOR` environment variable (defaults to vim)
 - **Configurable**: Change the editor and data directory with `cs config`
 - **Shell Completion**: Tab completion for commands and sheet names (`cs completion zsh|bash`)
+- **Backup / Restore**: One-command tar.gz backup of all your sheets
 
 ## Samples
 
@@ -232,6 +244,19 @@ cs add vim --file sample/ja/vim.md
 cs add tmux --file sample/ja/tmux.md
 cs add cc-skills --file sample/ja/cc-skills.md
 cs add cs-help --file sample/ja/cs-help.md
+```
+
+### Backup and restore
+
+```bash
+# Create ./cheatsheet-backup-<timestamp>.tar.gz
+cs backup
+
+# Back up to a specific file or directory
+cs backup --out ~/backups/
+
+# Restore (refuses to overwrite existing data without --force)
+cs restore cheatsheet-backup-20260706-153005.tar.gz --force
 ```
 
 ### Configuration

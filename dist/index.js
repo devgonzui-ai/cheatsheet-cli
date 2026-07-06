@@ -13,6 +13,7 @@ const edit_1 = require("./commands/edit");
 const remove_1 = require("./commands/remove");
 const rename_1 = require("./commands/rename");
 const export_1 = require("./commands/export");
+const backup_1 = require("./commands/backup");
 const config_1 = require("./commands/config");
 const completion_1 = require("./commands/completion");
 const interactive_1 = require("./commands/interactive");
@@ -21,7 +22,7 @@ const program = new commander_1.Command();
 program
     .name('cs')
     .description('A CLI tool to save and manage cheatsheets for commands and tools locally')
-    .version('1.5.1');
+    .version('1.6.0');
 // 引数なしで実行したらインタラクティブ選択モード（TTYのみ）
 program.action(async () => {
     if (process.stdin.isTTY && process.stdout.isTTY) {
@@ -44,6 +45,8 @@ program.addCommand(edit_1.editCommand);
 program.addCommand(remove_1.removeCommand);
 program.addCommand(rename_1.renameCommand);
 program.addCommand(export_1.exportCommand);
+program.addCommand(backup_1.backupCommand);
+program.addCommand(backup_1.restoreCommand);
 program.addCommand(config_1.configCommand);
 program.addCommand(completion_1.completionCommand);
 program.addCommand(completion_1.namesCommand, { hidden: true });
