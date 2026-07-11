@@ -23,6 +23,8 @@ npm install -g @gonzui/csheet-cli
 | `cs add <name> --file <path>` | 既存ファイルから追加 |
 | `cs add <name> --stdin` | 標準入力から追加（例: `tldr tar \| cs add tar-tips --stdin`） |
 | `cs add <name> --tag <tags>` | カンマ区切りのタグを付けて追加 |
+| `cs gen <name> <topic>` | Claude AIでチートシートを生成（要 `ANTHROPIC_API_KEY`） |
+| `cs refine <name>` | Claude AIで雑なメモを整形されたMarkdownに書き直す |
 | `cs list` | 一覧表示 |
 | `cs list --tag <tag>` | タグで絞り込んで一覧表示 |
 | `cs show <name>` | 内容を表示（Markdownレンダリング付き） |
@@ -57,6 +59,22 @@ tldr tar | cs add tar-tips --stdin
 
 # タグを付けて追加
 cs add git-commands --tag git,vcs
+```
+
+### AIで生成・整形
+
+`cs gen` と `cs refine` は Claude API を直接呼び出すため、APIキーが必要です（`cs mcp` はキー不要）。先に環境変数 `ANTHROPIC_API_KEY` を設定してください。
+
+```bash
+# トピックからチートシートを生成
+cs gen jq-basics jq basics --tag json
+
+# パイプで突っ込んだ雑なメモをきれいなチートシートに整形
+history | tail -50 | cs add docker-notes --stdin
+cs refine docker-notes
+
+# 保存せずに整形結果をプレビュー
+cs refine docker-notes --dry-run
 ```
 
 ### 表示
@@ -157,6 +175,7 @@ Claude Desktop（`claude_desktop_config.json`）:
 ## 機能
 
 - **MCPサーバー**: `cs mcp` でチートシートをAIエージェントに公開
+- **AI生成**: `cs gen` でトピックからチートシートを生成、`cs refine` で雑なメモを整形（Claude API）
 - **Markdownレンダリング**: コードブロックのシンタックスハイライト、テーブルの整形、見出しの色分け
 - **全文検索**: チートシート名と内容からキーワード検索
 - **タグ管理**: タグによるチートシートの整理・絞り込み

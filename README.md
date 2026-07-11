@@ -23,6 +23,8 @@ npm install -g @gonzui/csheet-cli
 | `cs add <name> --file <path>` | Add from an existing file |
 | `cs add <name> --stdin` | Add from stdin (e.g. `tldr tar \| cs add tar-tips --stdin`) |
 | `cs add <name> --tag <tags>` | Add with comma-separated tags |
+| `cs gen <name> <topic>` | Generate a cheatsheet with Claude AI (requires `ANTHROPIC_API_KEY`) |
+| `cs refine <name>` | Restructure a sheet into clean Markdown with Claude AI |
 | `cs list` | List all cheatsheets |
 | `cs list --tag <tag>` | List cheatsheets filtered by tag |
 | `cs show <name>` | Display cheatsheet content (with Markdown rendering) |
@@ -57,6 +59,22 @@ tldr tar | cs add tar-tips --stdin
 
 # Add with tags
 cs add git-commands --tag git,vcs
+```
+
+### Generate and refine with AI
+
+`cs gen` and `cs refine` call the Claude API directly, so they need an API key (unlike `cs mcp`, which is free to run). Set the `ANTHROPIC_API_KEY` environment variable first.
+
+```bash
+# Generate a cheatsheet from a topic
+cs gen jq-basics jq basics --tag json
+
+# Turn messy piped-in notes into a clean cheatsheet
+history | tail -50 | cs add docker-notes --stdin
+cs refine docker-notes
+
+# Preview the refined result without saving
+cs refine docker-notes --dry-run
 ```
 
 ### View cheatsheets
@@ -157,6 +175,7 @@ So you can ask Claude things like *"check my cheatsheets for the deploy procedur
 ## Features
 
 - **MCP Server**: Expose your cheatsheets to AI agents with `cs mcp`
+- **AI Generation**: Create cheatsheets from a topic with `cs gen`, or clean up messy notes with `cs refine` (Claude API)
 - **Markdown Rendering**: Syntax highlighting for code blocks, formatted tables, colored headings
 - **Full-text Search**: Search by cheatsheet name and content
 - **Tags**: Organize and filter cheatsheets with tags
