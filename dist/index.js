@@ -13,12 +13,22 @@ const edit_1 = require("./commands/edit");
 const remove_1 = require("./commands/remove");
 const rename_1 = require("./commands/rename");
 const export_1 = require("./commands/export");
+const interactive_1 = require("./commands/interactive");
 const storage_1 = require("./lib/storage");
 const program = new commander_1.Command();
 program
     .name('cs')
     .description('A CLI tool to save and manage cheatsheets for commands and tools locally')
-    .version('1.3.0');
+    .version('1.4.0');
+// 引数なしで実行したらインタラクティブ選択モード（TTYのみ）
+program.action(async () => {
+    if (process.stdin.isTTY && process.stdout.isTTY) {
+        await (0, interactive_1.runInteractive)();
+    }
+    else {
+        program.help();
+    }
+});
 // コマンドを登録
 program.addCommand(add_1.addCommand);
 program.addCommand(gen_1.genCommand);

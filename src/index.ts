@@ -11,6 +11,7 @@ import { editCommand } from './commands/edit';
 import { removeCommand } from './commands/remove';
 import { renameCommand } from './commands/rename';
 import { exportCommand } from './commands/export';
+import { runInteractive } from './commands/interactive';
 import { initStorage } from './lib/storage';
 
 const program = new Command();
@@ -18,7 +19,16 @@ const program = new Command();
 program
   .name('cs')
   .description('A CLI tool to save and manage cheatsheets for commands and tools locally')
-  .version('1.3.0');
+  .version('1.4.0');
+
+// 引数なしで実行したらインタラクティブ選択モード（TTYのみ）
+program.action(async () => {
+  if (process.stdin.isTTY && process.stdout.isTTY) {
+    await runInteractive();
+  } else {
+    program.help();
+  }
+});
 
 // コマンドを登録
 program.addCommand(addCommand);

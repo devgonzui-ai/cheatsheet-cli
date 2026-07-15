@@ -19,6 +19,7 @@ npm install -g @gonzui/csheet-cli
 
 | コマンド | 説明 |
 |---------|------|
+| `cs` | インタラクティブモード: fzf風インクリメンタル検索→表示 |
 | `cs add <name>` | チートシートを追加（$EDITORでエディタ起動、未設定ならvim） |
 | `cs add <name> --file <path>` | 既存ファイルから追加 |
 | `cs add <name> --stdin` | 標準入力から追加（例: `tldr tar \| cs add tar-tips --stdin`） |
@@ -109,14 +110,25 @@ cs copy git-commands --all
 ### 検索
 
 ```bash
-# 名前と内容から検索
+# 名前と内容から検索（内容マッチはgrep風にマッチ行を表示）
 cs search commit
+
+# fuzzy検索も対応（"gitcmd" で "git-commands" がヒット）
+cs search gitcmd
 
 # タグで検索
 cs search --tag git
 
 # キーワードとタグを組み合わせて検索
 cs search commit --tag git
+```
+
+### インタラクティブモード
+
+引数なしで `cs` を実行すると、fzf風のインクリメンタル検索（部分一致 + fuzzy）でシートを選んでそのまま表示できます。
+
+```bash
+cs
 ```
 
 ### 編集・削除
@@ -177,7 +189,8 @@ Claude Desktop（`claude_desktop_config.json`）:
 - **MCPサーバー**: `cs mcp` でチートシートをAIエージェントに公開
 - **AI生成**: `cs gen` でトピックからチートシートを生成、`cs refine` で雑なメモを整形（Claude API）
 - **Markdownレンダリング**: コードブロックのシンタックスハイライト、テーブルの整形、見出しの色分け
-- **全文検索**: チートシート名と内容からキーワード検索
+- **インタラクティブモード**: 引数なしの `cs` でfzf風インクリメンタル検索
+- **全文検索**: 名前と内容から検索、マッチ行のgrep風表示とfuzzy名前検索に対応
 - **タグ管理**: タグによるチートシートの整理・絞り込み
 - **クリップボードコピー**: `cs copy` でコードブロックをそのままクリップボードへ
 - **パイプ対応**: `cs add --stdin` で標準入力からシートを登録
