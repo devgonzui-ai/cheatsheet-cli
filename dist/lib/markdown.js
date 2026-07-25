@@ -16,6 +16,8 @@ const getDisplayWidth = (str) => {
     return stringWidth(stripped);
 };
 exports.getDisplayWidth = getDisplayWidth;
+// コードフェンス（``` 以上の長さ）。開始フェンス以上の長さの行でのみ閉じる
+const FENCE_PATTERN = /^(`{3,})(.*)$/;
 // コードブロックをボックスで囲む
 const formatCodeBlock = (code, lang) => {
     let highlighted;
@@ -80,18 +82,22 @@ const extractCodeBlocks = (content) => {
     const lines = content.split('\n');
     const blocks = [];
     let inCodeBlock = false;
+    let fence = '';
     let lang = '';
     let buffer = [];
     for (const line of lines) {
-        if (line.startsWith('```')) {
+        const fenceMatch = line.match(FENCE_PATTERN);
+        if (fenceMatch && (!inCodeBlock || fenceMatch[1].length >= fence.length)) {
             if (!inCodeBlock) {
                 inCodeBlock = true;
-                lang = line.slice(3).trim();
+                fence = fenceMatch[1];
+                lang = fenceMatch[2].trim();
                 buffer = [];
             }
             else {
                 blocks.push({ lang, code: buffer.join('\n').trim() });
                 inCodeBlock = false;
+                fence = '';
                 lang = '';
             }
             continue;
@@ -108,21 +114,25 @@ const renderMarkdown = (content) => {
     const lines = content.split('\n');
     const result = [];
     let inCodeBlock = false;
+    let fence = '';
     let codeBlockLang = '';
     let codeBlockContent = [];
     let inTable = false;
     let tableContent = [];
     for (const line of lines) {
         // コードブロックの開始/終了
-        if (line.startsWith('```')) {
+        const fenceMatch = line.match(FENCE_PATTERN);
+        if (fenceMatch && (!inCodeBlock || fenceMatch[1].length >= fence.length)) {
             if (!inCodeBlock) {
                 inCodeBlock = true;
-                codeBlockLang = line.slice(3).trim();
+                fence = fenceMatch[1];
+                codeBlockLang = fenceMatch[2].trim();
                 codeBlockContent = [];
             }
             else {
                 result.push((0, exports.formatCodeBlock)(codeBlockContent.join('\n'), codeBlockLang));
                 inCodeBlock = false;
+                fence = '';
                 codeBlockLang = '';
             }
             continue;

@@ -11,6 +11,9 @@ export const getDisplayWidth = (str: string): number => {
   return stringWidth(stripped);
 };
 
+// コードフェンス（``` 以上の長さ）。開始フェンス以上の長さの行でのみ閉じる
+const FENCE_PATTERN = /^(`{3,})(.*)$/;
+
 // コードブロックをボックスで囲む
 export const formatCodeBlock = (code: string, lang: string): string => {
   let highlighted: string;
@@ -86,18 +89,22 @@ export const extractCodeBlocks = (content: string): CodeBlock[] => {
   const lines = content.split('\n');
   const blocks: CodeBlock[] = [];
   let inCodeBlock = false;
+  let fence = '';
   let lang = '';
   let buffer: string[] = [];
 
   for (const line of lines) {
-    if (line.startsWith('```')) {
+    const fenceMatch = line.match(FENCE_PATTERN);
+    if (fenceMatch && (!inCodeBlock || fenceMatch[1].length >= fence.length)) {
       if (!inCodeBlock) {
         inCodeBlock = true;
-        lang = line.slice(3).trim();
+        fence = fenceMatch[1];
+        lang = fenceMatch[2].trim();
         buffer = [];
       } else {
         blocks.push({ lang, code: buffer.join('\n').trim() });
         inCodeBlock = false;
+        fence = '';
         lang = '';
       }
       continue;
@@ -116,6 +123,7 @@ export const renderMarkdown = (content: string): string => {
   const lines = content.split('\n');
   const result: string[] = [];
   let inCodeBlock = false;
+  let fence = '';
   let codeBlockLang = '';
   let codeBlockContent: string[] = [];
   let inTable = false;
@@ -123,14 +131,17 @@ export const renderMarkdown = (content: string): string => {
 
   for (const line of lines) {
     // コードブロックの開始/終了
-    if (line.startsWith('```')) {
+    const fenceMatch = line.match(FENCE_PATTERN);
+    if (fenceMatch && (!inCodeBlock || fenceMatch[1].length >= fence.length)) {
       if (!inCodeBlock) {
         inCodeBlock = true;
-        codeBlockLang = line.slice(3).trim();
+        fence = fenceMatch[1];
+        codeBlockLang = fenceMatch[2].trim();
         codeBlockContent = [];
       } else {
         result.push(formatCodeBlock(codeBlockContent.join('\n'), codeBlockLang));
         inCodeBlock = false;
+        fence = '';
         codeBlockLang = '';
       }
       continue;

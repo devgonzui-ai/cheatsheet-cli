@@ -63,5 +63,20 @@ services:
         const content = '```bash\ngit status';
         (0, vitest_1.expect)((0, markdown_1.extractCodeBlocks)(content)).toEqual([]);
     });
+    // ``` を含む内容は4連以上のフェンスで包むのが正しい書き方
+    (0, vitest_1.it)('長いフェンスの中の ``` は本文として扱う', () => {
+        const content = '````\nsee ```python\nflat = []\n```\n````';
+        const blocks = (0, markdown_1.extractCodeBlocks)(content);
+        (0, vitest_1.expect)(blocks).toHaveLength(1);
+        (0, vitest_1.expect)(blocks[0].lang).toBe('');
+        (0, vitest_1.expect)(blocks[0].code).toBe('see ```python\nflat = []\n```');
+    });
+    (0, vitest_1.it)('長いフェンスの後ろのブロックも番号がズレない', () => {
+        const content = '````md\nnested:\n```bash\ngit status\n```\n````\n\n```bash\necho hello\n```';
+        const blocks = (0, markdown_1.extractCodeBlocks)(content);
+        (0, vitest_1.expect)(blocks).toHaveLength(2);
+        (0, vitest_1.expect)(blocks[0].lang).toBe('md');
+        (0, vitest_1.expect)(blocks[1].code).toBe('echo hello');
+    });
 });
 //# sourceMappingURL=codeblocks.test.js.map
