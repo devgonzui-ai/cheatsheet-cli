@@ -42,6 +42,8 @@ npm install -g @gonzui/csheet-cli
 | `cs rename <old> <new> -f` | 新しい名前が存在する場合も強制変更 |
 | `cs export <name>` | カレントディレクトリにエクスポート |
 | `cs export <name> --out <path>` | 指定パスにエクスポート |
+| `cs backup [--out <path>]` | 全シートを tar.gz にバックアップ |
+| `cs restore <file>` | バックアップから復元 |
 | `cs mcp` | AIエージェント用のMCPサーバーを起動（Claude Code / Claude Desktop など） |
 | `cs config [key] [value]` | 設定の表示・変更（`editor`、`dir`） |
 | `cs completion <shell>` | シェル補完スクリプトを出力（`zsh` / `bash`） |
@@ -186,6 +188,15 @@ Claude Desktop（`claude_desktop_config.json`）:
 
 「デプロイ手順、あたしのチートシートから探して」「このjqワンライナー集をチートシートに保存して」みたいな使い方ができます。
 
+#### Claude Code スキル（MCPの代替）
+
+`cs` CLI の使い方を Claude Code に教える[スキル](https://code.claude.com/docs/en/skills)も同梱しています:
+
+```bash
+mkdir -p ~/.claude/skills/cheatsheet-cli
+cp "$(npm root -g)/@gonzui/csheet-cli/skill/SKILL.md" ~/.claude/skills/cheatsheet-cli/
+```
+
 ## 機能
 
 - **MCPサーバー**: `cs mcp` でチートシートをAIエージェントに公開
@@ -199,6 +210,7 @@ Claude Desktop（`claude_desktop_config.json`）:
 - **エディタ連携**: 環境変数 `$EDITOR` を使用（未設定時はvim）
 - **設定変更**: `cs config` でエディタ・データ保存先を変更可能
 - **シェル補完**: コマンドとシート名のTab補完（`cs completion zsh|bash`）
+- **バックアップ/復元**: `cs backup` で全シートを tar.gz に
 
 ## サンプル
 
@@ -232,6 +244,19 @@ cs add vim --file sample/en/vim.md
 cs add tmux --file sample/en/tmux.md
 cs add cc-skills --file sample/en/cc-skills.md
 cs add cs-help --file sample/en/cs-help.md
+```
+
+### バックアップ・復元
+
+```bash
+# ./cheatsheet-backup-<タイムスタンプ>.tar.gz を作成
+cs backup
+
+# 出力先を指定（ファイルまたはディレクトリ）
+cs backup --out ~/backups/
+
+# 復元（既存データがある場合は --force が必要）
+cs restore cheatsheet-backup-20260706-153005.tar.gz --force
 ```
 
 ### 設定
