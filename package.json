@@ -1,6 +1,6 @@
 {
   "name": "@gonzui/csheet-cli",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "description": "A CLI tool to save and manage cheatsheets for commands and tools locally",
   "main": "dist/index.js",
   "bin": {
