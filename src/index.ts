@@ -21,7 +21,7 @@ const program = new Command();
 program
   .name('cs')
   .description('A CLI tool to save and manage cheatsheets for commands and tools locally')
-  .version('1.5.0');
+  .version('1.5.1');
 
 // 引数なしで実行したらインタラクティブ選択モード（TTYのみ）
 program.action(async () => {
