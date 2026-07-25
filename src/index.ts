@@ -1,5 +1,6 @@
 import { Command } from 'commander';
 import { addCommand } from './commands/add';
+import { fetchCommand } from './commands/fetch';
 import { genCommand } from './commands/gen';
 import { refineCommand } from './commands/refine';
 import { listCommand } from './commands/list';
@@ -22,7 +23,7 @@ const program = new Command();
 program
   .name('cs')
   .description('A CLI tool to save and manage cheatsheets for commands and tools locally')
-  .version('1.6.0');
+  .version('1.7.0');
 
 // 引数なしで実行したらインタラクティブ選択モード（TTYのみ）
 program.action(async () => {
@@ -35,6 +36,7 @@ program.action(async () => {
 
 // コマンドを登録
 program.addCommand(addCommand);
+program.addCommand(fetchCommand);
 program.addCommand(genCommand);
 program.addCommand(refineCommand);
 program.addCommand(listCommand);

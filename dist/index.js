@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const commander_1 = require("commander");
 const add_1 = require("./commands/add");
+const fetch_1 = require("./commands/fetch");
 const gen_1 = require("./commands/gen");
 const refine_1 = require("./commands/refine");
 const list_1 = require("./commands/list");
@@ -22,7 +23,7 @@ const program = new commander_1.Command();
 program
     .name('cs')
     .description('A CLI tool to save and manage cheatsheets for commands and tools locally')
-    .version('1.6.0');
+    .version('1.7.0');
 // 引数なしで実行したらインタラクティブ選択モード（TTYのみ）
 program.action(async () => {
     if (process.stdin.isTTY && process.stdout.isTTY) {
@@ -34,6 +35,7 @@ program.action(async () => {
 });
 // コマンドを登録
 program.addCommand(add_1.addCommand);
+program.addCommand(fetch_1.fetchCommand);
 program.addCommand(gen_1.genCommand);
 program.addCommand(refine_1.refineCommand);
 program.addCommand(list_1.listCommand);

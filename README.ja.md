@@ -24,6 +24,8 @@ npm install -g @gonzui/csheet-cli
 | `cs add <name> --file <path>` | 既存ファイルから追加 |
 | `cs add <name> --stdin` | 標準入力から追加（例: `tldr tar \| cs add tar-tips --stdin`） |
 | `cs add <name> --tag <tags>` | カンマ区切りのタグを付けて追加 |
+| `cs fetch <topic>` | [cheat.sh](https://cheat.sh) からチートシートを取得して表示 |
+| `cs fetch <topic> --save [name]` | cheat.sh から取得してローカルに保存 |
 | `cs gen <name> <topic>` | Claude AIでチートシートを生成（要 `ANTHROPIC_API_KEY`） |
 | `cs refine <name>` | Claude AIで雑なメモを整形されたMarkdownに書き直す |
 | `cs list` | 一覧表示 |
@@ -64,6 +66,28 @@ tldr tar | cs add tar-tips --stdin
 
 # タグを付けて追加
 cs add git-commands --tag git,vcs
+```
+
+### cheat.sh から取得
+
+`cs fetch` は [cheat.sh](https://cheat.sh) からコミュニティのチートシートを取得します。APIキーは不要です。
+
+```bash
+# 保存せずに表示するだけ
+cs fetch tar
+
+# ローカルに保存（名前はトピックから生成。/ + . は - に畳まれる）
+cs fetch tar --save
+cs fetch python/lists --save        # "python-lists" として保存
+
+# 名前を指定して、タグ付きで保存
+cs fetch tar --save tar-tips --tag archive,cli
+
+# 既存シートを上書き
+cs fetch tar --save --force
+
+# 取得してから Claude に整形させる
+cs fetch git --save git-basics && cs refine git-basics
 ```
 
 ### AIで生成・整形
@@ -199,6 +223,7 @@ cp "$(npm root -g)/@gonzui/csheet-cli/skill/SKILL.md" ~/.claude/skills/cheatshee
 
 ## 機能
 
+- **cheat.sh連携**: `cs fetch` でコミュニティのチートシートを取得（APIキー不要）
 - **MCPサーバー**: `cs mcp` でチートシートをAIエージェントに公開
 - **AI生成**: `cs gen` でトピックからチートシートを生成、`cs refine` で雑なメモを整形（Claude API）
 - **Markdownレンダリング**: コードブロックのシンタックスハイライト、テーブルの整形、見出しの色分け

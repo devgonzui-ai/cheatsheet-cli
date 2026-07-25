@@ -5,6 +5,7 @@ exports.getCompletionScript = exports.SUPPORTED_SHELLS = exports.SHEET_NAME_COMM
 // 補完対象のサブコマンド一覧
 exports.COMPLETION_COMMANDS = [
     'add',
+    'fetch',
     'gen',
     'refine',
     'list',

@@ -3,6 +3,7 @@
 // 補完対象のサブコマンド一覧
 export const COMPLETION_COMMANDS = [
   'add',
+  'fetch',
   'gen',
   'refine',
   'list',

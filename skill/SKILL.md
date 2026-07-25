@@ -32,6 +32,17 @@ some-command --help | cs add some-command --stdin
 
 Names may only contain alphanumerics, hyphens, and underscores. Tags are comma-separated.
 
+## Fetch from cheat.sh (no API key)
+
+```bash
+cs fetch <topic>                    # print a community cheatsheet (e.g. tar, python/lists)
+cs fetch <topic> --save             # save it; name derives from the topic
+cs fetch <topic> --save <name> --tag <tags>
+cs fetch <topic> --save --force     # overwrite an existing sheet
+```
+
+Prefer this over `cs gen` when the topic is a well-known command — it is free and needs no key. Exits 1 if the topic is unknown on cheat.sh.
+
 ## AI helpers (require ANTHROPIC_API_KEY)
 
 ```bash

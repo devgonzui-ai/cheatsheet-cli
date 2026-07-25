@@ -24,6 +24,8 @@ npm install -g @gonzui/csheet-cli
 | `cs add <name> --file <path>` | Add from an existing file |
 | `cs add <name> --stdin` | Add from stdin (e.g. `tldr tar \| cs add tar-tips --stdin`) |
 | `cs add <name> --tag <tags>` | Add with comma-separated tags |
+| `cs fetch <topic>` | Fetch a cheatsheet from [cheat.sh](https://cheat.sh) and print it |
+| `cs fetch <topic> --save [name]` | Fetch from cheat.sh and save it locally |
 | `cs gen <name> <topic>` | Generate a cheatsheet with Claude AI (requires `ANTHROPIC_API_KEY`) |
 | `cs refine <name>` | Restructure a sheet into clean Markdown with Claude AI |
 | `cs list` | List all cheatsheets |
@@ -64,6 +66,28 @@ tldr tar | cs add tar-tips --stdin
 
 # Add with tags
 cs add git-commands --tag git,vcs
+```
+
+### Fetch from cheat.sh
+
+No API key needed — `cs fetch` pulls community cheatsheets from [cheat.sh](https://cheat.sh) over plain HTTP.
+
+```bash
+# Print a cheatsheet without saving it
+cs fetch tar
+
+# Save it locally (name defaults to the topic, with / + . folded to -)
+cs fetch tar --save
+cs fetch python/lists --save        # saved as "python-lists"
+
+# Save under a specific name, with tags
+cs fetch tar --save tar-tips --tag archive,cli
+
+# Overwrite an existing sheet
+cs fetch tar --save --force
+
+# Fetch, then let Claude clean it up
+cs fetch git --save git-basics && cs refine git-basics
 ```
 
 ### Generate and refine with AI
@@ -199,6 +223,7 @@ cp "$(npm root -g)/@gonzui/csheet-cli/skill/SKILL.md" ~/.claude/skills/cheatshee
 
 ## Features
 
+- **cheat.sh Integration**: Pull community cheatsheets with `cs fetch` (no API key required)
 - **MCP Server**: Expose your cheatsheets to AI agents with `cs mcp`
 - **AI Generation**: Create cheatsheets from a topic with `cs gen`, or clean up messy notes with `cs refine` (Claude API)
 - **Markdown Rendering**: Syntax highlighting for code blocks, formatted tables, colored headings
